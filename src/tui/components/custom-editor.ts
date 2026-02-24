@@ -1,5 +1,14 @@
 import { Editor, Key, matchesKey } from "@mariozechner/pi-tui";
 
+export function isShiftEnterInput(data: string): boolean {
+  return (
+    matchesKey(data, Key.shift("enter")) ||
+    data === "\x1b[13;2~" ||
+    data === "\x1b[13;2u" ||
+    data === "\x1b[27;2;13~"
+  );
+}
+
 export class CustomEditor extends Editor {
   onEscape?: () => void;
   onCtrlC?: () => void;
@@ -13,6 +22,10 @@ export class CustomEditor extends Editor {
   onAltEnter?: () => void;
 
   handleInput(data: string): void {
+    if (isShiftEnterInput(data)) {
+      this.insertTextAtCursor("\n");
+      return;
+    }
     if (matchesKey(data, Key.alt("enter")) && this.onAltEnter) {
       this.onAltEnter();
       return;
