@@ -1,3 +1,4 @@
+import { setKittyProtocolActive } from "@mariozechner/pi-tui";
 import { describe, expect, it } from "vitest";
 import { isShiftEnterInput } from "./custom-editor.js";
 
@@ -11,5 +12,13 @@ describe("isShiftEnterInput", () => {
 
   it("does not treat plain enter as shift+enter", () => {
     expect(isShiftEnterInput("\r")).toBe(false);
+  });
+
+  it("matches shift+enter when kitty protocol mode maps it to newline", () => {
+    setKittyProtocolActive(false);
+    expect(isShiftEnterInput("\n")).toBe(false);
+    setKittyProtocolActive(true);
+    expect(isShiftEnterInput("\n")).toBe(true);
+    setKittyProtocolActive(false);
   });
 });
